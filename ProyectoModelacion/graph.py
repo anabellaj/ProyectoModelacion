@@ -1,6 +1,8 @@
 import networkx as nx
 
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
+
 
 class Graph:
 
@@ -29,8 +31,7 @@ class Graph:
         pos = nx.spring_layout(self.G)
         nx.draw_networkx_edge_labels(self.G,pos, edge_labels=labels)
         nx.draw(self.G, pos)
-        plt.draw()
-        plt.show()  
+        return figure(figsize=(5,5), dpi=100)
 
     #Encuentra los caminos más cortos desde dos origenes hasta un mismo destino, para el segundo origen elimina las aristas
     #usadas en el primero para evitar coincidencias en las rutas
