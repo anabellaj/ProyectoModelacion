@@ -55,14 +55,14 @@ class Graph:
         #ruta si Javier no tiene restricciones
         best_route_javier = self.shortest_paths(originJ, originA, destination)
         time_andreina = best_route_javier[3]+(2*(len(best_route_javier[2])-1))
-        best_route_javier[3]=time_andreina
+        best_route_javier[3]=max(time_andreina, 0)
         total_time_javier = best_route_javier[1]+time_andreina
 
 
         #ruta si Andreina no tiene restricciones
         best_route_andreina = self.shortest_paths(originA, originJ, destination)
         time_andreina=best_route_andreina[1]+(2*(len(best_route_andreina[0])-1))
-        best_route_andreina[1]=time_andreina
+        best_route_andreina[1]=max(time_andreina, 0)
         total_time_andreina = best_route_andreina[3]+time_andreina
 
         if(total_time_javier<total_time_andreina):

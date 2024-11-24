@@ -7,6 +7,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from tktimepicker import SpinTimePickerModern
 from tktimepicker import constants
+from tkinter import messagebox
+
 
 class MainWindow:
 
@@ -56,9 +58,21 @@ class MainWindow:
                     self.destination = local["coordinates"]
 
         def build_simulation():
-            self.configs_frame.destroy()
-            build_options()
-            build_graph_view()
+        # Hide other frames if they exist
+            if hasattr(self, 'configs_frame'):
+                self.configs_frame.pack_forget()
+            if hasattr(self, 'options_frame'):
+                self.options_frame.pack_forget()
+            if hasattr(self, 'graph_frame'):
+                self.graph_frame.pack_forget()
+            if hasattr(self, 'result_frame'):
+                self.result_frame.pack_forget()
+
+            
+            build_options()  
+            build_graph_view()  
+
+       
 
 
 
@@ -70,24 +84,32 @@ class MainWindow:
             newCalleL = self.comboBoxCalleNuevo.get()
             newCarreraL = self.comboBoxCarreraNuevo.get()
 
+            # Validate that the new local name is not empty
+            if self.nuevoLocal.get().strip() == "":
+                messagebox.showwarning("Input Error", "Por favor, ingrese un nombre para el nuevo local.")
+                return  # Exit the function if the input is invalid
+
             new_cod = list(self.cood_Javier)
-            if(newCalleJ.strip()!=""):
+            if newCalleJ.strip() != "":
                 new_cod[0] = int(newCalleJ)
-            if(newCarreraJ.strip()!=""):
+            if newCarreraJ.strip() != "":
                 new_cod[1] = int(newCarreraJ)
-            self.cood_Javier= tuple(new_cod)
+            self.cood_Javier = tuple(new_cod)
+
             new_cod = list(self.cood_Andreina)
-            if(newCalleA.strip()!=""):
+            if newCalleA.strip() != "":
                 new_cod[0] = int(newCalleA)
-            if(newCarreraA.strip()!=""):
+            if newCarreraA.strip() != "":
                 new_cod[1] = int(newCarreraA)
-            self.cood_Andreina= tuple(new_cod)
-            if(self.nuevoLocal.get().strip()!="" and newCalleL.strip()!= "" and newCarreraL.strip()!=""):
-                self.locales.append({"name": self.nuevoLocal.get(), "coordinates":(int(newCalleL), int(newCarreraL))})
+            self.cood_Andreina = tuple(new_cod)
+
+            # Check if the new local coordinates are also valid
+            if newCalleL.strip() != "" and newCarreraL.strip() != "":
+                self.locales.append({"name": self.nuevoLocal.get(), "coordinates": (int(newCalleL), int(newCarreraL))})
                 get_locales_options()
-
-
-
+                messagebox.showinfo("Cambio guardado", "El nuevo local ha sido agregado con éxito.")
+            else:
+                messagebox.showwarning("Input Error", "Por favor, seleccione una calle y carrera para el nuevo local.")
 
         def build_config():
             self.configs_frame = Frame(self.m, width=1000, height=500)
