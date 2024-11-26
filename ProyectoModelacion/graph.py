@@ -74,8 +74,8 @@ class Graph:
                     "time_total": total_time_javier}
         else:
             
-            return {"route_javier" : best_route_andreina[0], 
-                    "route_andreina": best_route_andreina[2], 
+            return {"route_javier" : best_route_andreina[2], 
+                    "route_andreina": best_route_andreina[0], 
                     "time_javier": best_route_andreina[1], 
                     "time_andreina": best_route_andreina[3], 
                     "time_total": total_time_andreina}

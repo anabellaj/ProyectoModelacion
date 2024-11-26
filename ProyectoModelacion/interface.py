@@ -15,8 +15,9 @@ class MainWindow:
     m = tk.Tk()
     options_frame = Frame(m, width=200, height=500, padx=32)
     graph_frame = Frame (m, width=500, height=500)
-    result_frame = Frame(m, background="#5F9EA0", height=200, width=500)
+    result_frame = Frame(m, bg="#ececec", height=200, width=500)
     configs_frame = Frame(m, width=1000, height=500)
+
 
     #elementos de la pantalla de simulación
     labelComboBox = Label(options_frame, text="Seleccione un local")
@@ -45,6 +46,8 @@ class MainWindow:
 
 
     def __init__(self, graph: graph.Graph):
+        
+        self.config_open = False 
 
         def get_locales_options():
             new_locales=[]
@@ -58,7 +61,7 @@ class MainWindow:
                     self.destination = local["coordinates"]
 
         def build_simulation():
-        # Hide other frames if they exist
+            self.config_open= False
             if hasattr(self, 'configs_frame'):
                 self.configs_frame.pack_forget()
             if hasattr(self, 'options_frame'):
@@ -84,11 +87,8 @@ class MainWindow:
             newCalleL = self.comboBoxCalleNuevo.get()
             newCarreraL = self.comboBoxCarreraNuevo.get()
 
-            # Validate that the new local name is not empty
-            if self.nuevoLocal.get().strip() == "":
-                messagebox.showwarning("Input Error", "Por favor, ingrese un nombre para el nuevo local.")
-                return  # Exit the function if the input is invalid
-
+              
+            
             new_cod = list(self.cood_Javier)
             if newCalleJ.strip() != "":
                 new_cod[0] = int(newCalleJ)
@@ -102,61 +102,71 @@ class MainWindow:
             if newCarreraA.strip() != "":
                 new_cod[1] = int(newCarreraA)
             self.cood_Andreina = tuple(new_cod)
+            
+            # Se valida que no esté vacío el nombre
+            if self.nuevoLocal.get().strip() == "" and (newCalleL.strip() != "" and newCarreraL.strip() != ""):
+                messagebox.showwarning("Input Error", "Por favor, ingrese un nombre para el nuevo local.")
+                return
 
-            # Check if the new local coordinates are also valid
+            # Se chequea la validez de las nuevas coordenadas
             if newCalleL.strip() != "" and newCarreraL.strip() != "":
                 self.locales.append({"name": self.nuevoLocal.get(), "coordinates": (int(newCalleL), int(newCarreraL))})
                 get_locales_options()
                 messagebox.showinfo("Cambio guardado", "El nuevo local ha sido agregado con éxito.")
-            else:
+            if self.nuevoLocal.get().strip() != "" and newCalleL.strip() == "" and newCarreraL.strip() == "":
                 messagebox.showwarning("Input Error", "Por favor, seleccione una calle y carrera para el nuevo local.")
+            
+            messagebox.showinfo("Cambio guardado", "Se han guardado los cambios sin éxito")
+
 
         def build_config():
-            self.configs_frame = Frame(self.m, width=1000, height=500)
+            if not self.config_open:
+                self.configs_frame = Frame(self.m, background="#C3B1E1", width=1000, height=500)
 
-            self.configs_frame.pack(expand=True, fill="both")
-            self.configs_frame.pack_propagate(0)
-            self.options_frame.destroy()
-            self.graph_frame.destroy()
-            labelConfig = Label(self.configs_frame, text= "Configuración")
-            labelConfig.pack()
-            labelJavier = Label(self.configs_frame, text="Dirección de Javier")
-            labelJavier.pack()
-            CallelabelJavier = Label(self.configs_frame, text="Calle de Javier")
-            CallelabelJavier.pack()
-            self.comboBoxCalleJ = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54])
-            self.comboBoxCalleJ.pack()
-            CarreralabelJavier = Label(self.configs_frame, text="Carrera de Javier")
-            CarreralabelJavier.pack()
-            self.comboBoxCarreraJ = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14])
-            self.comboBoxCarreraJ.pack()
-            labelJavier = Label(self.configs_frame, text="Dirección de Andreina")
-            labelJavier.pack()
-            CallelabelAndreina = Label(self.configs_frame, text="Calle de Andreina")
-            CallelabelAndreina.pack()
-            self.comboBoxCalleA = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54])
-            self.comboBoxCalleA.pack()
-            CarreralabelAndreina = Label(self.configs_frame, text="Carrera de Andreina")
-            CarreralabelAndreina.pack()
-            self.comboBoxCarreraA = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14])
-            self.comboBoxCarreraA.pack()
+                self.configs_frame.pack(expand=True, fill="both")
+                self.configs_frame.pack_propagate(0)
+                self.options_frame.destroy()
+                self.graph_frame.destroy()
+                labelConfig = Label(self.configs_frame, text= "Configuración",  background="#C3B1E1")
+                labelConfig.pack()
+                labelJavier = Label(self.configs_frame, text="Dirección de Javier", background="#C3B1E1")
+                labelJavier.pack()
+                CallelabelJavier = Label(self.configs_frame, text="Calle de Javier", background="#C3B1E1")
+                CallelabelJavier.pack()
+                self.comboBoxCalleJ = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54])
+                self.comboBoxCalleJ.pack()
+                CarreralabelJavier = Label(self.configs_frame, text="Carrera de Javier", background="#C3B1E1")
+                CarreralabelJavier.pack()
+                self.comboBoxCarreraJ = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14], background="#C3B1E1")
+                self.comboBoxCarreraJ.pack()
+                labelJavier = Label(self.configs_frame, text="Dirección de Andreina", background="#C3B1E1")
+                labelJavier.pack()
+                CallelabelAndreina = Label(self.configs_frame, text="Calle de Andreina", background="#C3B1E1")
+                CallelabelAndreina.pack()
+                self.comboBoxCalleA = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54], background="#C3B1E1")
+                self.comboBoxCalleA.pack()
+                CarreralabelAndreina = Label(self.configs_frame, text="Carrera de Andreina", background="#C3B1E1")
+                CarreralabelAndreina.pack()
+                self.comboBoxCarreraA = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14], background="#C3B1E1")
+                self.comboBoxCarreraA.pack()
 
-            labelNuevoLocal = Label(self.configs_frame, text="Agregar Nuevo Local")
-            labelNuevoLocal.pack()
-            NombreLocal = tk.Entry(self.configs_frame, textvariable=self.nuevoLocal)
-            NombreLocal.pack()
-            CallelabelNuevo = Label(self.configs_frame, text="Calle de Nuevo Local")
-            CallelabelNuevo.pack()
-            self.comboBoxCalleNuevo = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54])
-            self.comboBoxCalleNuevo.pack()
-            CarreralabelNuevo = Label(self.configs_frame, text="Carrera de Nuevo Local")
-            CarreralabelNuevo.pack()
-            self.comboBoxCarreraNuevo = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14])
-            self.comboBoxCarreraNuevo.pack()
+                labelNuevoLocal = Label(self.configs_frame, text="Agregar Nuevo Local", background="#C3B1E1")
+                labelNuevoLocal.pack()
+                NombreLocal = tk.Entry(self.configs_frame, textvariable=self.nuevoLocal, background="#FFFFFF")
+                NombreLocal.pack()
+                CallelabelNuevo = Label(self.configs_frame, text="Calle de Nuevo Local", background="#C3B1E1")
+                CallelabelNuevo.pack()
+                self.comboBoxCalleNuevo = ttk.Combobox(self.configs_frame,state="readonly", values=[50,51,52,53,54], background="#C3B1E1")
+                self.comboBoxCalleNuevo.pack()
+                CarreralabelNuevo = Label(self.configs_frame, text="Carrera de Nuevo Local", background="#C3B1E1")
+                CarreralabelNuevo.pack()
+                self.comboBoxCarreraNuevo = ttk.Combobox(self.configs_frame,state="readonly", values=[10,11,12,13,14], background="#C3B1E1")
+                self.comboBoxCarreraNuevo.pack()
 
-            saveButton = Button(self.configs_frame, command=save_configs, text="Guardar Cambios")
-            saveButton.pack()
+                saveButton = Button(self.configs_frame, command=save_configs, text="Guardar Cambios", background="#C3B1E1")
+                saveButton.pack()
 
+            self.config_open = True
 
 
 
@@ -192,11 +202,12 @@ class MainWindow:
             pos = {(x,y):(y,-x) for x,y in graph.G.nodes()}
             fig = plt.Figure(figsize=(5,5)) 
             ax = fig.add_subplot()  
-            nx.draw(graph.G, pos, ax=ax)
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, node_size=50)
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Andreina], node_color="r")
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Javier], node_color="b")
-            nx.draw_networkx_edge_labels(graph.G,pos, edge_labels=labels, ax=ax)
+            nx.draw_networkx_edges(graph.G, pos, ax=ax)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, node_size=500, node_color="#FFDE21", edgecolors="#FFDE21")
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Andreina], node_color="#C3B1E1", node_size=500)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Javier], node_color="#89CFF0", node_size=500)
+            nx.draw_networkx_labels(graph.G,pos, ax=ax, font_size=8, font_color="#000")
+            nx.draw_networkx_edge_labels(graph.G,pos, edge_labels=labels, ax=ax, font_size=8)
 
             canvas = FigureCanvasTkAgg(fig, self.graph_frame)
             canvas.get_tk_widget().pack()
@@ -209,7 +220,7 @@ class MainWindow:
             return list_edge
 
         def build_path_view(result):
-            self.graph_frame = Frame (self.m, width=200, height=500)
+            self.graph_frame = Frame (self.m, width=500, height=500)
             self.graph_frame.pack(side="left")
 
             path_edgesJ = create_edge_list(result["route_javier"])
@@ -218,15 +229,16 @@ class MainWindow:
             pos = {(x,y):(y,-x) for x,y in graph.G.nodes()}
             fig = plt.Figure(figsize=(5,5)) 
             ax = fig.add_subplot()
+            nx.draw_networkx_edges(graph.G, pos, ax=ax)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, node_size=500, node_color="#FFDE21", edgecolors="#FFDE21")
+            nx.draw_networkx_edge_labels(graph.G,pos, edge_labels=labels, ax=ax, font_size=10)
+            nx.draw_networkx_edges(graph.G, pos, edgelist=path_edgesJ, edge_color="#89CFF0", width=5, ax=ax)
+            nx.draw_networkx_edges(graph.G, pos, edgelist=path_edgesA, edge_color="#C3B1E1", width=5, ax=ax)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Javier], node_color="#89CFF0", node_size=500)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Andreina], node_color="#C3B1E1", node_size=500)
+            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.destination], node_color="#50C878", node_size=500)
+            nx.draw_networkx_labels(graph.G,pos, ax=ax, font_size=10, font_color="#000")
 
-            nx.draw(graph.G, pos, ax=ax)
-            nx.draw_networkx_edge_labels(graph.G,pos, edge_labels=labels, ax=ax)
-            nx.draw_networkx_edges(graph.G, pos, edgelist=path_edgesJ, edge_color="r", width=5, ax=ax)
-            nx.draw_networkx_edges(graph.G, pos, edgelist=path_edgesA, edge_color="b", width=5, ax=ax)
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, node_size=50)
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Javier], node_color="r")
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.cood_Andreina], node_color="b")
-            nx.draw_networkx_nodes(graph.G, pos, ax=ax, nodelist=[self.destination], node_color="g")
 
 
             canvas = FigureCanvasTkAgg(fig, self.graph_frame)
@@ -248,11 +260,13 @@ class MainWindow:
             result = graph.determine_best_route(self.cood_Javier, self.cood_Andreina, self.destination)
             
             arrival_time= self.time_picker.time()
+            
+            # leave_javier = "{}:{} {}".format(arrival_time[0], (arrival_time[1]-result["time_javier"]), arrival_time[2])
+            # leave_andreina = "{}:{} {}".format(arrival_time[0], (arrival_time[1]-result["time_andreina"]), arrival_time[2])
+            leave_javier = calculate_leave_time(arrival_time, result["time_javier"])
+            leave_andreina = calculate_leave_time(arrival_time, result["time_andreina"])
 
-            leave_javier = "{}:{} {}".format(arrival_time[0], (arrival_time[1]-result["time_javier"]), arrival_time[2])
-            leave_andreina = "{}:{} {}".format(arrival_time[0], (arrival_time[1]-result["time_andreina"]), arrival_time[2])
-
-            self.result_frame = Frame(self.m, background="#5F9EA0", height=500, width=200)
+            self.result_frame = Frame(self.m, height=500, width=200)
             self.resultText = Label(self.result_frame, text= "Javier tarda {} minutos en llegar\nJavier tiene que salir a las {}\nAndreina tarda {} minutos\nAndreina tiene que salir a las {}".format(result["time_javier"],leave_javier, result["time_andreina"], leave_andreina))
             self.resultText.pack()
             backButton = Button(self.result_frame, text="Reiniciar", command=restart)
@@ -260,8 +274,25 @@ class MainWindow:
             self.options_frame.destroy()
             self.graph_frame.destroy()
 
-            self.result_frame.pack(side="left")
+            self.result_frame.pack(side="left", fill="y", padx=150, pady=150)
             build_path_view(result)
+            
+        def calculate_leave_time (arrival_time, trip_time):
+            time = arrival_time[1]-trip_time
+            print(time)
+
+            if time < 0:
+                if arrival_time[0] == 1:
+                    return f"12:{60-(time*-1)} {arrival_time[2]}"
+                elif arrival_time[0] == 12 and arrival_time[2] == "AM":
+                    return f"11:{60-(time*-1)} PM"
+                elif arrival_time[0] == 12 and arrival_time[2] == "PM":
+                    return f"11:{60-(time*-1)} AM"
+                else:
+                    return f"{arrival_time[0]-1}:{60-(time*-1)} {arrival_time[2]}"
+                    
+            return f"{arrival_time[0]}:{(time)} {arrival_time[2]}"
+            
 
 
             
